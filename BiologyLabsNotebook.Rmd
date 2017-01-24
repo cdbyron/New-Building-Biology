@@ -1,0 +1,207 @@
+---
+title: "R Notebook"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing each chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file).
+
+
+This chunk will install packages the tidyverse package. Also there is an object creation for a dataframe read as the original csv spreadhseet file.
+```{r}
+library(tidyverse)
+EquipInven=read.csv(file="~/Documents/R_Files/R_data_files/Data_Files/EquipmentInventory.csv", header=TRUE)
+attach(EquipInven)
+```
+
+
+This chunk graphs the whole inventory by equipment type. This is not too useful though because of the disparity between equipment types and the fact that many smaller pieces of equipment are not yet named in the dataframe.
+```{r}
+room <- as.character(Room) 
+ggplot(EquipInven) +
+  geom_count(aes(x = Equipment.Name, y = room, color = room, size = Quantity)) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  ggtitle("Biology Equipment Items for New Science Building")
+
+room <- as.character(Room) 
+ggplot(EquipInven) +
+  geom_count(aes(x = Equipment.Name, y = room, size = Quantity)) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  ggtitle("Biology Equipment Items for New Science Building")
+
+ggplot(EquipInven, aes(x=Equipment.Name, y=Quantity)) +
+  geom_point() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  theme(axis.text.x = element_blank()) +
+  facet_wrap(~Room)
+```
+
+
+Use dplyr to analyze groups by different factors. This will generate two lists that summarize the data from the csv file. 
+```{r}
+EquipInven %>% group_by(Equipment.Name) %>% count()
+EquipInven %>% group_by(Room) %>% count()
+
+equipsort <- sort(Equipment.Name)
+roomsort <- sort(Room)
+EquipInven %>% table(Equipment.Name, Room)
+
+with(d.col, table(Hair, Eye))
+```
+
+
+This chunk plots balances per room.
+```{r}
+balances <- filter(EquipInven, (Equipment.Name == "toploading balance") | (Equipment.Name == "precision balance"))
+balances %>% 
+  ggplot(aes(x=Equipment.Name, y=Quantity, fill=Equipment.Name)) +
+  geom_bar(stat="identity") +
+  geom_text(aes(label=Quantity), vjust=1) +
+  theme(axis.text.x = element_blank()) +
+  facet_wrap(~Room) +
+  ggtitle("Biology Equipment Items for New Science Building")
+```
+
+This chunk plots microscopes per room.
+```{r}
+microscopes <- filter(EquipInven, (Equipment.Name == "microscope dissecting") | (Equipment.Name == "microscope compound") | (Equipment.Name == "microscope compound phase") | (Equipment.Name == "microscope dissecting") | (Equipment.Name ==  "microscope invert phase fluor") | (Equipment.Name == "microscope w camera") | (Equipment.Name == "microscope compound phase camera"))
+microscopes %>% 
+  ggplot(aes(x=Equipment.Name, y=Quantity, fill=Equipment.Name)) +
+  geom_bar(stat="identity") +
+  geom_text(aes(label=Quantity), vjust=1) +
+  theme(axis.text.x = element_blank()) +
+  facet_wrap(~Room) +
+  ggtitle("Biology Equipment Items for New Science Building")
+```
+
+This chunk plots centrifuges and the plant growth chambers. The ultracentrifuge needs to be moved with professional assistance. Find out what this costs along with the balancing and servicing. We may need to be flexible in how we share centrifuges between adjacent labs.
+```{r}
+centrifuges <- filter(EquipInven, (Equipment.Name == "centrifuge") | (Equipment.Name == "centrifuge micro") | (Equipment.Name == "centrifuge ultra") | (Equipment.Name == "plant growth chamber"))
+centrifuges %>% 
+  ggplot(aes(x=Equipment.Name, y=Quantity, fill=Equipment.Name)) +
+  geom_bar(stat="identity") +
+  geom_text(aes(label=Quantity), vjust=1) +
+  theme(axis.text.x = element_blank()) +
+  facet_wrap(~Room) +
+  ggtitle("Biology Equipment Items for New Science Building")
+```
+
+This chunk plots various incubators. Note there are stacking incubator varieties in room 347.
+```{r}
+incubators <- filter(EquipInven, (Equipment.Name == "CO2 incubators") | (Equipment.Name == "water bath") | (Equipment.Name == "water bath med size shaking") | (Equipment.Name == "shaking incubator") | (Equipment.Name == "incubator"))
+incubators %>% 
+  ggplot(aes(x=Equipment.Name, y=Quantity, fill=Equipment.Name)) +
+  geom_bar(stat="identity") +
+  geom_text(aes(label=Quantity), vjust=1) +
+  theme(axis.text.x = element_blank()) +
+  facet_wrap(~Room) +
+  ggtitle("Biology Equipment Items for New Science Building")
+```
+
+This chunk plots the hotplates. We added another category here called "heat block".
+```{r}
+hotplatespHmeters <- filter(EquipInven, (Equipment.Name == "hot plate with stirrer") | (Equipment.Name == "pH meter") | (Equipment.Name == "heat block"))
+hotplatespHmeters %>% 
+  ggplot(aes(x=Equipment.Name, y=Quantity, fill=Equipment.Name)) +
+  geom_bar(stat="identity") +
+  geom_text(aes(label=Quantity), vjust=1) +
+  theme(axis.text.x = element_blank()) +
+  facet_wrap(~Room) +
+  ggtitle("Biology Equipment Items for New Science Building")
+```
+
+This chunk plots applicanes per room. 
+```{r}
+appliances <- filter(EquipInven, (Equipment.Name == "refrigerator") | (Equipment.Name == "refrigerator chromatography") | (Equipment.Name == "refrigerator combo") | (Equipment.Name == "refrigerator deli") | (Equipment.Name ==  "minus 20 freezer") | (Equipment.Name == "minus 80 freezer") | (Equipment.Name == "dishwasher"))
+appliances %>% 
+  ggplot(aes(x=Equipment.Name, y=Quantity, fill=Equipment.Name)) +
+  geom_bar(stat="identity") +
+  geom_text(aes(label=Quantity), vjust=1) +
+  theme(axis.text.x = element_blank()) +
+  facet_wrap(~Room) +
+  ggtitle("Biology Equipment Items for New Science Building")
+```
+
+This chunk needs to be SIGNIFICANTLY revised with new equipment name labels and subcategories.
+```{r}
+shakers <- filter(EquipInven, (Equipment.Name == "shaker MaxQ4000") | (Equipment.Name == "shaker nutator") | (Equipment.Name == "shaker orbital") | (Equipment.Name == "vortex"))
+shakers %>% 
+  ggplot(aes(x=Equipment.Name, y=Quantity, fill=Equipment.Name)) +
+  geom_bar(stat="identity") +
+  geom_text(aes(label=Quantity), vjust=1) +
+  theme(axis.text.x = element_blank()) +
+  facet_wrap(~Room) +
+  ggtitle("Biology Equipment Items for New Science Building")
+```
+
+This chunk plots the A&P models needed to complete eight sets of lab equipment. Consult Brittany, Katie, Barry, and Mike for revisions.
+```{r}
+models <- filter(EquipInven, (Equipment.Name == "Anatomy Models"))
+models %>% 
+  ggplot(aes(x=Equipment.Description, y=Quantity, fill=Equipment.Description)) +
+  geom_bar(stat="identity") +
+  geom_text(aes(label=Quantity), vjust=2) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("Biology Equipment Items for New Science Building")
+```
+
+This chunk plots computers per room. A desktop computer needs to go with each plate reader.
+```{r}
+computers <- filter(EquipInven, (Equipment.Name == "Thin Client Computers") | (Equipment.Name == "Desktop Computers")) 
+computers %>% 
+  ggplot(aes(x=Equipment.Name, y=Quantity, fill=Equipment.Name)) + 
+  geom_bar(stat="identity") +
+  geom_text(aes(label=Quantity), vjust=2) +
+  theme(axis.text.x = element_blank()) +
+  facet_wrap(~Room) +
+  ggtitle("Biology Equipment Items for New Science Building")
+```
+
+These charts plot glassware sets for three types, beakers, erlenmeyer flasks, and graduated cylinders. Perhaps we should begin thinking about the general biology lab rooms as the template. For good measure if we planned to outfit each of the third floor labs with these numbers for beakers, flasks, and cylinders we would ensure we were covering our basic needs and then some. This would mean purchasing four sets of what is seen in room 121. All our current glassware would get distributed throughout the first floor and all that remains from first and third can get distributed in the research space or other places as we see fit at a later date.
+```{r}
+glassbeakers <- filter(EquipInven, (Equipment.Name == "beaker"))
+glassbeakers %>% 
+  ggplot(aes(x = Equipment.Description, y = Quantity, fill = Equipment.Description)) +
+  geom_col(stat = "identity", position = "dodge") +
+  geom_text(aes(label=Quantity), vjust=2) +
+  theme(axis.text.x = element_blank()) +
+  facet_wrap(~Room) +
+  ggtitle("Glass Beakers for New Science Building")
+
+glassflasks <- filter(EquipInven, (Equipment.Name == "erlenmeyer flask"))
+glassflasks %>% 
+  ggplot(aes(x = Equipment.Description, y = Quantity, fill = Equipment.Description)) +
+  geom_col(stat = "identity", position = "dodge") +
+  geom_text(aes(label=Quantity), vjust=2) +
+  theme(axis.text.x = element_blank()) +
+  facet_wrap(~Room) +
+  ggtitle("Erlenmeyer Flasks for New Science Building")
+  
+glasscylinders <- filter(EquipInven, (Equipment.Name == "graduated cylinder"))
+glasscylinders %>% 
+  ggplot(aes(x = Equipment.Description, y = Quantity, fill = Equipment.Description)) +
+  geom_col(stat = "identity", position = "dodge") +
+  geom_text(aes(label=Quantity), vjust=2) +
+  theme(axis.text.x = element_blank()) +
+  facet_wrap(~Room) +
+  ggtitle("Graduated Cylinders for New Science Building")
+```
+
+This chart plots the gel equipment and it needs significant revision. Amy, Ginger, and Linda can hopefully give feedback about how to better portray these epquipment pieces.
+```{r}
+GelSupplies <- filter(EquipInven, (Equipment.Name == "gel supplies"))
+GelSupplies %>% 
+  ggplot(aes(x=Equipment.Description, y=Quantity, fill=Equipment.Description)) + 
+  geom_bar(stat="identity") +
+  geom_text(aes(label=Quantity), vjust=2) +
+  theme(axis.text.x = element_blank()) +
+  facet_wrap(~Room) +
+  ggtitle("Biology Equipment Items for New Science Building")
+```
