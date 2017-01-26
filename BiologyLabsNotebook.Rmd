@@ -5,16 +5,6 @@ output:
   pdf_document: default
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
-
-Try executing each chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
-
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
-
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file).
-
-
-This chunk will install packages the tidyverse package. Also there is an object creation for a dataframe read as the original csv spreadhseet file.
 ```{r}
 library(tidyverse)
 EquipInven=read.csv(file="~/Documents/R_Files/R_data_files/Data_Files/EquipmentInventory.csv", header=TRUE)
@@ -48,12 +38,6 @@ Use dplyr to analyze groups by different factors. This will generate two lists t
 ```{r}
 EquipInven %>% group_by(Equipment.Name) %>% count()
 EquipInven %>% group_by(Room) %>% count()
-
-equipsort <- sort(Equipment.Name)
-roomsort <- sort(Room)
-EquipInven %>% table(Equipment.Name, Room)
-
-with(d.col, table(Hair, Eye))
 ```
 
 
